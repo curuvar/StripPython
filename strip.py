@@ -36,8 +36,8 @@ import sys, token, tokenize
 #  Function  stripFile
 # ------------------------------------------------------------------------------
 
-def stripFile( source, destination, indent, debug = False ):
-    """ Strip comments, document strings and extranious white space
+def stripFile( source, destination, indent = 0, dump = False ):
+    """ Strip comments, document strings and extraneous white space
         from a file
 
         Parameters:
@@ -57,16 +57,16 @@ def stripFile( source, destination, indent, debug = False ):
 
     for tokenType, tokenText, (startLine, startCol), (endLine, endCol), lineText in tokenizer:
 
-        if debug:
-            print( "%2d %10s %4d.%3d %4d.%3d %-20r %r"
-                      % (indentCount,
+        if dump:
+            print( "%2d %10s %4d.%-3d %4d.%-3d %-20r %r"
+                      % (indentLevel,
                         tokenize.tok_name.get( tokenType, tokenType ),
-                        srcLine,
-                        srcCol,
-                        elineno,
-                        ecol,
+                        startLine,
+                        startCol,
+                        endLine,
+                        endCol,
                         tokenText,
-                        ltext), file=sys.stderr )
+                        lineText), file=sys.stderr )
 
         # We want to eliminate comments and doc string so if we have one
         # of those we just ignore the token.
@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
     parser.add_argument( "-V", "--version",
                          action  = 'version',
-                         version = '%(prog)s 1.0' )
+                         version = '%(prog)s 1.0.1' )
 
     parser.add_argument( "-o", "--output",
                          action  = 'store',
@@ -195,7 +195,7 @@ if __name__ == '__main__':
       else:
         destinationFile = outputFile
 
-      stripFile( sourceFile, destinationFile, args.indent )
+      stripFile( sourceFile, destinationFile, args.indent, args.dump )
 
       sourceFile.close()
 
